@@ -1,3 +1,5 @@
 database.db
 *.7z
-.idea
+
+.idea/
+*.iml
