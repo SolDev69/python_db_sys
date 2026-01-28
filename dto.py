@@ -17,4 +17,3 @@ def find_salt_among_dtos(user):
         if dto.name == user:
             return dto.salt
     return None
-

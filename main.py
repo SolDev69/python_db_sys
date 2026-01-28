@@ -16,16 +16,16 @@ while loop:
         username = input("Username: ")
         password = input("Password: ")
         salt = find_salt_among_dtos(username)
-        if salt is None:
-            cur.execute("SELECT salt FROM users WHERE name = ?", (username,))
-            salt = cur.fetchone()[0]
-        cur.execute("SELECT * FROM users WHERE name = ? AND password = ?", (username, hashword_salts(password, salt)))
-        row = cur.fetchone()
-        if row is None:
-            print("User does not exist with username and password provided")
-        else:
+        try:
+            if salt is None:
+                cur.execute("SELECT salt FROM users WHERE name = ?", (username,))
+                salt = cur.fetchone()[0]
+            cur.execute("SELECT * FROM users WHERE name = ? AND password = ?", (username, hashword_salts(password, salt)))
+            row = cur.fetchone()
             print("User " + str(row[0]) + " : " + row[1] + " logged in!")
             handle_login(row, conn, cur)
+        except TypeError:
+            print("User does not exist with username and password provided")
 
     elif i == "R":
         username = input("Username: ")
