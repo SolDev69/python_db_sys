@@ -1,8 +1,10 @@
+from dto import find_salt_among_dtos
 from utils import *
 
 conn = sqlite3.connect('database.db')
 cur = conn.cursor()
-cur.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER UNIQUE NOT NULL PRIMARY KEY, name text UNIQUE, password text)''')
+cur.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER UNIQUE NOT NULL PRIMARY KEY, 
+                name text UNIQUE, password text, salt text)''')
 loop = True
 
 while loop:
@@ -13,18 +15,17 @@ while loop:
     if i == "L":
         username = input("Username: ")
         password = input("Password: ")
-        cur.execute("SELECT * FROM users WHERE name = ? AND password = ?", (username, hashword_new(password)))
+        salt = find_salt_among_dtos(username)
+        if salt is None:
+            cur.execute("SELECT salt FROM users WHERE name = ?", (username,))
+            salt = cur.fetchone()[0]
+        cur.execute("SELECT * FROM users WHERE name = ? AND password = ?", (username, hashword_salts(password, salt)))
         row = cur.fetchone()
         if row is None:
-            print("User does not exist")
+            print("User does not exist with username and password provided")
         else:
-            if row[1] != username:
-                print("Incorrect username")
-            elif row[2] != hashword_new(password):
-                print("Incorrect password")
-            else:
-                print("User " + str(row[0]) + " : " + row[1] + " logged in!")
-                handle_login(row, conn, cur)
+            print("User " + str(row[0]) + " : " + row[1] + " logged in!")
+            handle_login(row, conn, cur)
 
     elif i == "R":
         username = input("Username: ")
