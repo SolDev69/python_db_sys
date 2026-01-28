@@ -1,5 +1,10 @@
 database.db
 *.7z
 
+# Idea
 .idea/
 *.iml
+
+# Pycache
+__pycache__/
+*.pyc
