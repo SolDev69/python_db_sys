@@ -1,10 +1,11 @@
 if __name__ == "__main__":
     print("Wrong file!")
 
+import sys
 import hashlib
 import sqlite3
 
-from dto import add_dto, UserDto
+from utils.dto import add_dto, UserDto
 import os
 
 def hashword(p):
@@ -17,7 +18,10 @@ def hashword_new(p):
     m.update(p.encode('utf-8'))
     return m.hexdigest()
 
-def hashword_salts(p, s = os.urandom(16)):
+def hashword_salts(p, s):
+    if s is None:
+        print("Please provide salt")
+        sys.exit(-1)
     m = hashlib.pbkdf2_hmac('sha256', p.encode('utf-8'), s, 100_000)
     return m.hex()
 

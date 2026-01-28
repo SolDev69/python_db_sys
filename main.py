@@ -1,12 +1,10 @@
-from dto import find_salt_among_dtos
-from utils import *
+from utils import handle_login, handle_register, hashword_salts
+from utils.dbutils import init_db
+from utils.dto import find_salt_among_dtos
 
-conn = sqlite3.connect('database.db')
-cur = conn.cursor()
-cur.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER UNIQUE NOT NULL PRIMARY KEY, 
-                name text UNIQUE, password text, salt text)''')
+conn, cur = init_db()
+
 loop = True
-
 while loop:
     print("Login: L")
     print("Register: R")
