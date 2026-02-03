@@ -1,17 +1,8 @@
 from utils.dbutils import init_scoreboard
 
-if __name__ == "__main__":
-    print("Wrong file!")
-    cont = input("Run main file? (Y/n)")
-    if cont.upper() == "N":
-        exit()
-    else:
-        from main import main_loop
-        main_loop()
-
 import sys
 import hashlib
-import sqlite3
+from mysql.connector import errors
 
 from utils.dto import add_dto, UserDto, ScoreDto
 import os
@@ -40,14 +31,14 @@ def _quit(c):
 def handle_register(name, pwd, con, cur):
     try:
         saltgen = os.urandom(16)
-        cur.execute('''INSERT INTO users (name, password, salt) VALUES (?,?,?)''', (name, hashword_salts(pwd, saltgen), saltgen))
+        cur.execute('''INSERT INTO users (name, password, salt) VALUES (%s,%s,%s)''', (name, hashword_salts(pwd, saltgen), saltgen))
         add_dto(UserDto(id, name, saltgen, pwd))
-    except sqlite3.IntegrityError:
+    except errors.IntegrityError:
         print("User already exists!")
     con.commit()
 
 def get_user_id(cur, name):
-    cur.execute('''SELECT id FROM users WHERE name = ?''', (name,))
+    cur.execute('''SELECT id FROM users WHERE name = %s''', (name,))
     user_id = cur.fetchone()[0]
     return user_id
 
@@ -71,7 +62,7 @@ def handle_login(r, con, cur):
                     print("ID is " + str(get_user_id(cur, name)))
             elif i2.startswith("del"):
                 if i2.split(" ")[1].lower() == "table":
-                    warn = input("WARNING! This action will delete THE WHOLE DB! DO NOT DO THIS! Are you sure you want to do this? (y/N)")
+                    warn = input("WARNING! This action will delete THE WHOLE DB! DO NOT DO THIS! Are you sure you want to do this%s (y/N)")
                     if warn.lower() == "y":
                         cur.execute('''DROP TABLE IF EXISTS users''')
                         con.commit()
@@ -79,7 +70,7 @@ def handle_login(r, con, cur):
                     try:
                         if i2.split(" ")[2].lower() == "all":
                             warn = input(
-                                "WARNING! This action will delete the current user " + name + "! Are you sure you want to do this? (y/N)")
+                                "WARNING! This action will delete the current user " + name + "! Are you sure you want to do this%s (y/N)")
                             if warn.lower() == "y":
                                 loop2 = False
                                 cur.execute("DELETE FROM users")
@@ -87,7 +78,7 @@ def handle_login(r, con, cur):
                         else:
                             target = i2.split(" ")[2].lower()
                             print("Deleting " + target)
-                            cur.execute("DELETE FROM users WHERE name = ?", (target,))
+                            cur.execute("DELETE FROM users WHERE name = %s", (target,))
                             con.commit()
                     except:
                         print("Please provide user")
@@ -136,18 +127,18 @@ def handle_login(r, con, cur):
                     score.set_user1(int(u1))
                     loop3 = True
                     while loop3:
-                        u2 = input("Who did you play against?")
+                        u2 = input("Who did you play against%s")
                         try:
-                            u2 = cur.execute("SELECT * FROM users WHERE name = ?", (u2,)).fetchone()[0]
+                            u2 = cur.execute("SELECT * FROM users WHERE name = %s", (u2,)).fetchone()[0]
                             loop3 = False
                         except TypeError:
                             print("User does not exist")
 
 
                     score.set_user2(int(u2))
-                    score.set_score1(input("What was your score?"))
-                    score.set_score2(input("What was your opponent's score?"))
-                    cur.execute("INSERT INTO scoreboard (user1, user2, score1, score2) VALUES (?,?,?,?)", (score.get_user1(), score.get_user2(), score.get_score1(), score.get_score2()))
+                    score.set_score1(input("What was your score%s"))
+                    score.set_score2(input("What was your opponent's score%s"))
+                    cur.execute("INSERT INTO scoreboard (user1, user2, score1, score2) VALUES (%s,%s,%s,%s)", (score.get_user1(), score.get_user2(), score.get_score1(), score.get_score2()))
                     con.commit()
-        except sqlite3.OperationalError:
+        except errors.OperationalError:
             print("Something went wrong! Likely cause: scoreboard not initialized, run `init scoreboard`")

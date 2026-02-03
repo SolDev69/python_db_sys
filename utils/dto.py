@@ -20,12 +20,6 @@ def find_salt_among_dtos(user):
 
 
 class ScoreDto:
-    # def __init__(self, user1, user2, score1, score2):
-    #     self.user1 = user1
-    #     self.user2 = user2
-    #     self.score1 = score1
-    #     self.score2 = score2
-
     def set_user1(self, user):
         self.user1 = user
     def set_user2(self, user):

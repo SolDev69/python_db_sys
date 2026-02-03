@@ -17,9 +17,9 @@ def main_loop():
             salt = find_salt_among_dtos(username)
             try:
                 if salt is None:
-                    cur.execute("SELECT salt FROM users WHERE name = ?", (username,))
+                    cur.execute("SELECT salt FROM users WHERE name = %s", (username,))
                     salt = cur.fetchone()[0]
-                cur.execute("SELECT * FROM users WHERE name = ? AND password = ?", (username, hashword_salts(password, salt)))
+                cur.execute("SELECT * FROM users WHERE name = %s AND password = %s", (username, hashword_salts(password, salt)))
                 row = cur.fetchone()
                 print("User " + str(row[0]) + " : " + row[1] + " logged in!")
                 handle_login(row, conn, cur)
