@@ -59,7 +59,7 @@ def login():
             login_str = str(row[0]) + " : " + row[1]
             cur.execute("SELECT * FROM scoreboard")
             scores = cur.fetchall()
-            return render_template("scoreboard/index.html", login = login_str, scoreboard=scores)
+            return redirect("/scoreboard")
             #return redirect("/scoreboard.html", login = str(row[0]) + " : " + row[1])
         else:
             return "Invalid username or password"
