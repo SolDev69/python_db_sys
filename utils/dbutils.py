@@ -13,8 +13,8 @@ def init_db():
     con = sqlite3.connect('database.db')
     cur = con.cursor()
     con.execute("PRAGMA foreign_keys = ON")
-    cur.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER UNIQUE NOT NULL PRIMARY KEY, 
-                    name text UNIQUE, password text, salt text)''')
+    cur.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER UNIQUE NOT NULL PRIMARY KEY AUTOINCREMENT, 
+                    name text UNIQUE, password text not null unique, salt blob not null unique)''')
     con.commit()
     return con, cur
 
