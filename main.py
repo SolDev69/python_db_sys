@@ -1,10 +1,22 @@
 from utils import handle_login, handle_register, hashword_salts
 from utils.dbutils import init_db
 from utils.dto import find_salt_among_dtos
-
-conn, cur = init_db()
-
+from mysql.connector import connect
+from os import environ
 def main_loop():
+    try:
+        con = connect(
+            host = environ["DB_HOST"],
+            user = environ["DB_USER"],
+            password = environ["DB_PASSWORD"],
+            port = int(environ["DB_PORT"]),
+            database = environ["DB_NAME"],
+            autocommit = False # TODO: Change to true if needed
+        )
+    except KeyError: 
+        raise EnvironmentError("Please set DB environment variables (DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME) and rerun!")
+
+    cur = init_db(con)
     loop = True
     while loop:
         print("Login: L")
@@ -22,17 +34,17 @@ def main_loop():
                 cur.execute("SELECT * FROM users WHERE name = %s AND password = %s", (username, hashword_salts(password, salt)))
                 row = cur.fetchone()
                 print("User " + str(row[0]) + " : " + row[1] + " logged in!")
-                handle_login(row, conn, cur)
+                handle_login(row, con, cur)
             except TypeError:
                 print("User does not exist with username and password provided")
 
         elif i == "R":
             username = input("Username: ")
             password = input("Password: ")
-            handle_register(username, password, conn, cur)
+            handle_register(username, password, con, cur)
         elif i == "Q":
-            conn.commit()
-            conn.close()
+            con.commit()
+            con.close()
             loop = False
         else:
             print("Invalid input")

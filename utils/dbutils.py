@@ -1,15 +1,4 @@
-import sqlite3
-import mysql.connector
-import os
-def init_db():
-    con = mysql.connector.connect(
-        host = os.environ["DB_HOST"],
-        user = os.environ["DB_USER"],
-        password = os.environ["DB_PASSWORD"],
-        port = int(os.environ["DB_PORT"]),
-        database = os.environ["DB_NAME"],
-        autocommit = False # TODO: Change to true if needed
-    )
+def init_db(con):
     cur = con.cursor()
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
@@ -32,7 +21,7 @@ def init_db():
     )
     """)
     con.commit()
-    return con, cur
+    return cur
 
 
 def init_scoreboard(con):
