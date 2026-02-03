@@ -54,9 +54,9 @@ def handle_login(r, con, cur):
                 if i2.split(" ")[1].lower() == "user":
                     print("User is " + name)
                 elif i2.split(" ")[1].lower() == "pass":
-                    print("Password is " + pwd)
+                    print("Password is (hidden)")
                 elif i2.split(" ")[1].lower() == "all":
-                    cur.execute("SELECT * FROM users")
+                    cur.execute("SELECT id,name FROM users")
                     print(cur.fetchall())
                 elif i2.split(" ")[1].lower() == "id":
                     print("ID is " + str(get_user_id(cur, name)))
