@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Scoreboard</title>
+</head>
+<body>
+    <h2>Logged in as {{ login }}</h2>
+    <a href="/scoreboard/addscore">Add Score</a>
+    <h1>Scoreboard</h1>
+    <table>
+        <tr>
+            <th>Opponent</th>
+            <th>Your Score</th>
+            <th>Opponent Score</th>
+        </tr>
+        {% for entry in scoreboard %}
+        <tr>
+            <td>{{ entry['opponent'] }}</td>
+            <td>{{ entry['score1'] }}</td>
+            <td>{{ entry['score2'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

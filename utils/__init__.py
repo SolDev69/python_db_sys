@@ -19,8 +19,7 @@ def hashword_new(p):
 
 def hashword_salts(p, s):
     if s is None:
-        print("Please provide salt")
-        sys.exit(-1)
+        raise EnvironmentError("Please provide salt")
     m = hashlib.pbkdf2_hmac('sha256', p.encode('utf-8'), s, 1_000_000)
     return m.hex()
 
