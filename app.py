@@ -9,23 +9,34 @@ from mysql.connector import errors
 
 app = Flask(__name__)
 
-try:
-    con = connect(
-        host = environ["DB_HOST"],
-        user = environ["DB_USER"],
-        password = environ["DB_PASSWORD"],
-        port = int(environ["DB_PORT"]),
-        database = environ["DB_NAME"],
-        autocommit = False # TODO: Change to true if needed
-    )
-except KeyError: 
-    raise EnvironmentError("Please set DB environment variables (DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME) and rerun!")
+def init_connection():
+    try:
+        con = connect(
+            host = environ["DB_HOST"],
+            user = environ["DB_USER"],
+            password = environ["DB_PASSWORD"],
+            port = int(environ["DB_PORT"]),
+            database = environ["DB_NAME"],
+            autocommit = False # TODO: Change to true if needed
+        )
+    except KeyError: 
+        raise EnvironmentError("Please set DB environment variables (DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME) and rerun!")
 
-cur = init_db(con)
+    except errors.DatabaseError:
+        return None
+    return con
+con, cur = None, None
 
 @app.route("/")
 def main():
+    global con, cur
+    if init_connection() is None:
+        return "Start the database server first!"
+    else:
+        con = init_connection()
+        cur = init_db(con)
     return render_template("index.html")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -74,7 +85,7 @@ def scoreboard():
     global login_str
     cur.execute("SELECT * FROM scoreboard")
     scores = cur.fetchall()
-    return render_template("scoreboard/index.html", login=login_str, scoreboard=scores)
+    return render_template("scoreboard/index.html", login=login_str, scoreboard=scores, is_admin = str(saved_row[1]).lower() == "admin")
 
 @app.route("/scoreboard/addscore", methods=["POST", "GET"])
 def add_score():
@@ -122,6 +133,20 @@ def self_destruct():
     con.commit()
     saved_row = []
     return redirect("/")
+
+@app.route("/admin/reset", methods=["POST", "GET"])
+def admin_reset():
+    global saved_row
+    if str(saved_row[1]).lower() == "admin":
+        cur.execute("DELETE FROM scoreboard;")
+        cur.execute("DELETE FROM users;")
+        cur.execute("ALTER TABLE scoreboard AUTO_INCREMENT = 1;")
+        cur.execute("ALTER TABLE users AUTO_INCREMENT = 1;")
+        
+        con.commit()
+        return "Congrats you destroyed the db :) <a href='/'>Go home</a>"
+    else:
+        return "Unauthorized", 403
 
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", debug=True)

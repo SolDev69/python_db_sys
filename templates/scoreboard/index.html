@@ -31,6 +31,17 @@
         <form method="POST" action="/scoreboard/selfdestruct" style="display:inline;">
             <input type="submit" value="Self Destruct Account" class="blob-button">
         </form>
+        <!-- Admin methods -->
+        <div class="admin-section">
+        {% if is_admin %}
+            <h3>Admin Actions</h3>
+            <!-- Reset Everything -->
+            <form method="POST" action="/admin/reset" style="display:inline;">
+                <input type="submit" value="Reset Everything" class="blob-button">
+            </form>
+        {% endif %}
+        </div>
+        <br />
         <a href="/" class="blob-button">Logout</a>
     </div>
 </body>
