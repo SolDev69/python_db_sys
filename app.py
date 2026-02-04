@@ -5,6 +5,7 @@ from utils.dbutils import init_db
 from utils.dto import find_salt_among_dtos
 from mysql.connector import connect
 from os import environ
+from mysql.connector import errors
 
 app = Flask(__name__)
 
@@ -79,24 +80,31 @@ def scoreboard():
 def add_score():
     global saved_row
     if request.method == "POST":
-        user1 = saved_row[0]
         u2 = 0
-        user2 = request.form["user2"]
+        user2_name = request.form["user2"]
         try:
-            cur.execute("SELECT * FROM users WHERE name = %s", (user2,))
+            cur.execute("SELECT * FROM users WHERE name = %s", (user2_name,))
             u2 = cur.fetchone()[0]
         except TypeError:
             print("User does not exist")
         
-        user2 = int(u2)
+        user2_id = int(u2)
         score1 = request.form["score1"]
         score2 = request.form["score2"]
-        cur.execute('''INSERT INTO scoreboard (user1, user2, score1, score2) VALUES (%s,%s,%s,%s)''', (user1, user2, score1, score2))
+        try:
+            cur.execute('''INSERT INTO scoreboard (
+                    user1_id, user1_name,
+                    user2_id, user2_name,
+                    score1, score2) VALUES (%s,%s,%s,%s,%s,%s)''', 
+                    (saved_row[0], saved_row[1], user2_id, user2_name, score1, score2))
+        except errors.IntegrityError:
+            return "Error inserting score: invalid user input! Make sure you put in a real user"
         con.commit()
         cur.execute("SELECT * FROM scoreboard")
         scores = cur.fetchall()
         con.commit()
-        return render_template("scoreboard/index.html", scoreboard=scores)
+        login = login_str
+        return redirect("/scoreboard")
     if request.method == "GET":
         return render_template("scoreboard/addscore.html")
 

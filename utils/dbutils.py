@@ -9,17 +9,7 @@ def init_db(con):
     )
     """)
 
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS scoreboard (
-      id BIGINT PRIMARY KEY AUTO_INCREMENT,
-      user1 BIGINT NOT NULL,
-      user2 BIGINT NOT NULL,
-      score1 INT,
-      score2 INT,
-      CONSTRAINT fk_score_user1 FOREIGN KEY (user1) REFERENCES users(id),
-      CONSTRAINT fk_score_user2 FOREIGN KEY (user2) REFERENCES users(id)
-    )
-    """)
+    init_scoreboard(con)
     con.commit()
     return cur
 
@@ -29,12 +19,14 @@ def init_scoreboard(con):
     cur.execute("""
     CREATE TABLE IF NOT EXISTS scoreboard (
       id BIGINT PRIMARY KEY AUTO_INCREMENT,
-      user1 BIGINT NOT NULL,
-      user2 BIGINT NOT NULL,
+      user1_id BIGINT NOT NULL,
+      user1_name VARCHAR(60) NOT NULL,
+      user2_id BIGINT NOT NULL,
+      user2_name VARCHAR(60) NOT NULL,
       score1 INT,
       score2 INT,
-      CONSTRAINT fk_score_user1 FOREIGN KEY (user1) REFERENCES users(id),
-      CONSTRAINT fk_score_user2 FOREIGN KEY (user2) REFERENCES users(id)
+      CONSTRAINT fk_score_user1 FOREIGN KEY (user1_id) REFERENCES users(id),
+      CONSTRAINT fk_score_user2 FOREIGN KEY (user2_id) REFERENCES users(id)
     )
     """)
     con.commit()
