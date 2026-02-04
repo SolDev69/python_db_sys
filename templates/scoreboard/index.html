@@ -6,14 +6,16 @@
     <h2>Logged in as {{ login }}</h2>
     <a href="/scoreboard/addscore">Add Score</a>
     <h1>Scoreboard</h1>
-    <table>
+    <table border="1">
         <tr>
-            <th>Opponent</th>
-            <th>Your Score</th>
-            <th>Opponent Score</th>
+            <th>Player 1</th>
+            <th>Player 2</th>
+            <th>Player 1 Score</th>
+            <th>Player 2 Score</th>
         </tr>
         {% for entry in scoreboard %}
         <tr>
+            <td>{{ entry[1] }} : {{ entry[2] }}</td>
             <td>{{ entry[3] }} : {{ entry[4] }}</td>
             <td>{{ entry[5] }}</td>
             <td>{{ entry[6] }}</td>
