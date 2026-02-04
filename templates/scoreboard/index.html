@@ -4,25 +4,34 @@
     <link rel="stylesheet" type="text/css" href="/static/global.css">
 </head>
 <body>
-    <h2>Logged in as {{ login }}</h2>
-    <a href="/scoreboard/addscore">Add Score</a>
-    <h1>Scoreboard</h1>
-    <table border="1">
-        <tr>
-            <th>Player 1</th>
-            <th>Player 2</th>
-            <th>Player 1 Score</th>
-            <th>Player 2 Score</th>
-        </tr>
-        {% for entry in scoreboard %}
-        <tr>
-            <td>{{ entry[1] }} : {{ entry[2] }}</td>
-            <td>{{ entry[3] }} : {{ entry[4] }}</td>
-            <td>{{ entry[5] }}</td>
-            <td>{{ entry[6] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    <a href="/">Logout</a>
+    <div class="blob">
+        <h2>Logged in as {{ login }}</h2>
+        <a href="/scoreboard/addscore" class="blob-button">Add Score</a>
+        <h1>Scoreboard</h1>
+        <table border="1" id="scoreboard-table">
+            <tr>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Player 1 Score</th>
+                <th>Player 2 Score</th>
+            </tr>
+            {% for entry in scoreboard %}
+            <tr>
+                <td>{{ entry[1] }} : {{ entry[2] }}</td>
+                <td>{{ entry[3] }} : {{ entry[4] }}</td>
+                <td>{{ entry[5] }}</td>
+                <td>{{ entry[6] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <!-- Clear scoreboard -->
+        <form method="POST" action="/scoreboard/clear" style="display:inline;">
+            <input type="submit" value="Clear Scoreboard" class="blob-button">
+        </form>
+        <form method="POST" action="/scoreboard/selfdestruct" style="display:inline;">
+            <input type="submit" value="Self Destruct Account" class="blob-button">
+        </form>
+        <a href="/" class="blob-button">Logout</a>
+    </div>
 </body>
 </html>

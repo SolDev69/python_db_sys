@@ -108,5 +108,20 @@ def add_score():
     if request.method == "GET":
         return render_template("scoreboard/addscore.html")
 
+@app.route("/scoreboard/clear", methods=["POST"])
+def clear_scoreboard():
+    cur.execute("DELETE FROM scoreboard")
+    con.commit()
+    return redirect("/scoreboard")
+
+@app.route("/scoreboard/selfdestruct", methods=["POST"])
+def self_destruct():
+    global saved_row
+    cur.execute("DELETE FROM users WHERE id = %s", (saved_row[0],))
+    cur.execute("DELETE FROM scoreboard WHERE user1_id = %s OR user2_id = %s", (saved_row[0], saved_row[0]))
+    con.commit()
+    saved_row = []
+    return redirect("/")
+
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", debug=True)
