@@ -34,7 +34,7 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
         handle_register(username, password, con, cur)
-        return redirect("/login")
+        return redirect("/")
     if request.method == "GET":
         return render_template("register.html")
 

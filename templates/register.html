@@ -1,14 +1,20 @@
 <html>
 <head>
     <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="/static/global.css">
 </head>
 <body>
-    <h1>Register</h1>
-    <form method="POST" action="/register">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Register">
-    </form>
+    <div class="blob">
+        <h1>Register</h1>
+        <form method="POST" action="/register">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            <input type="submit" value="Register" class="blob-button">
+            <input type="reset" value="Reset" class="blob-button">
+            <input type="button" value="Home" class="blob-button" onclick="window.location.href='/'">
+        </form>
+    </div>
+</body>
 </html>
